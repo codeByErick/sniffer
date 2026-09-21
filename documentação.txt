@@ -1,0 +1,18 @@
+socket_fd é a váriavel responsável por armazenar o descritor de arquivo
+retornado pela função socket().
+
+socket(): cria um endpoint para comunicação e retorna um arquivo.
+       Descritor que se refere a esse ponto final. O descritor de arquivo.
+       Veja mais em: https://man7.org/linux/man-pages/man2/socket.2.html
+
+unsigned char buffer[65536]: Cria um buffer com tamanho suficiente para conter os bytes de um frame Ethernet.
+
+
+recvfrom(): serve para receber mensagens (dados) de um socket.
+	    Veja mais em: https://man7.org/linux/man-pages/man3/recvfrom.3p.html
+
+
+struct ethhdr *ethernet = (struct ethhdr *) buffer: O ethhdr é uma estrutura de dados (struct) da linguagem C no núcleo do Linux Kernel 
+que representa o cabeçalho de uma camada de enlace Ethernet (Camada 2 do modelo OSI) definida em #include <netinet/if_ether.h>
+
+
