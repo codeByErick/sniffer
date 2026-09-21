@@ -1,0 +1,4 @@
+A lista oficial e universal de todos os códigos numéricos para o campo protocol 
+é gerenciada e atualizada pela IANA (Internet Assigned Numbers Authority).
+
+Também é possível obter os códigos no próprio linux com o comando cat /etc/protocols
