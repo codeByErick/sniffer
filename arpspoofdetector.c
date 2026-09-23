@@ -5,6 +5,7 @@
 #include <netinet/ip.h>
 #include <arpa/inet.h>
 #include <netinet/ip_icmp.h>
+#include <netinet/tcp.h>
 
 int main() {
 
@@ -86,9 +87,10 @@ int main() {
     );
     */
 
-    char buffer_source_ip[INET_ADDRSTRLEN]; //Cinstante para o tamanho de um ip em formato textual
+    char buffer_source_ip[INET_ADDRSTRLEN]; //Constante para o tamanho de um ipv4 em formato textual
     char buffer_dest_ip[INET_ADDRSTRLEN];
-    if (ntohs(ethernet->h_proto) == ETH_P_IP) { //Converte o campo h_proto de struct ethhdr que está em Network Byte Order para o formato de maquina
+    unsigned short mf_h_proto = ntohs(ethernet->h_proto); //Machine format H_PROTO
+    if (mf_h_proto == ETH_P_IP) { //Converte o campo h_proto de struct ethhdr que está em Network Byte Order para o formato de maquina
         struct iphdr *ip = (struct iphdr *) (buffer+14); // Typecast de buffer + 14, que aponta para o início do cabeçalho IPv4 após os 14 bytes do cabeçalho Ethernet, para struct iphdr, que representa a estrutura do cabeçalho IPv4.
         int tamanho_bytes_ipv4 = ip->ihl*4; // O campo IHL indica o tamanho do cabeçalho IPv4 em unidades de 32 bits (4 bytes); por isso, multiplicamos seu valor por 4 para obter o tamanho em bytes.
         inet_ntop(AF_INET, &ip->saddr, buffer_source_ip, sizeof(buffer_source_ip));
@@ -96,7 +98,19 @@ int main() {
         if(ip->protocol == 1){
             printf("%s -> %s | PROTOCOL: %d | ICMP\n", buffer_source_ip, buffer_dest_ip, ip->protocol);
         }
-    }       
+
+        else if(ip->protocol == IPPROTO_TCP) { //TCP Frame
+            struct tcphdr *tcph = (struct tcphdr *) (buffer + 14 + tamanho_bytes_ipv4); //Pulando os bytes do cabeçalho ethernet e do cabeçalho ip
+            unsigned short source = ntohs(tcph->source);
+            unsigned short dest = ntohs(tcph->dest);
+
+            printf("%s -> %s | SOURCE: %u | DEST: %u | PROTOCOL: %d |TCP\n", buffer_source_ip, buffer_dest_ip, source, dest, ip->protocol);
+
+        }
+
     }
+
+
+    } 
     return 0;
 }
